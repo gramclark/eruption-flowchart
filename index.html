@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>What To Do When It Erupts</title>
+<title>Conflict Resolution in Professional Digital Spaces</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;500;600;700&family=Roboto:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -292,7 +292,7 @@
     <div class="trail" id="trail"></div>
   </div>
 
-  <p class="footnote">Each box has a placeholder illustration frame — swap the <code>ph()</code> call for that node in <code>flowData</code> with your own <code>&lt;img&gt;</code> or inline SVG.</p>
+  <!-- <p class="footnote">Each box has a placeholder illustration frame — swap the <code>ph()</code> call for that node in <code>flowData</code> with your own <code>&lt;img&gt;</code> or inline SVG.</p> -->
 </div>
 
 <script>
@@ -332,40 +332,40 @@ function ph(label){
 const flowData = {
   start: {
     type: "info",
-    prompt: "Eruption! Something just set you off — an email, a comment, a moment in a meeting. Before reacting, walk through it.",
+    prompt: "Something negative erupts in Slack, Teams, on social or over email. What do you do now?",
     illustration: ph("eruption"),
     next: "step1"
   },
   step1: {
     type: "info",
-    prompt: "Step 1 — Pause. Take a breath. Give yourself a beat before you respond.",
+    prompt: "Step 1 — Pause. Take a moment. Not everthing needs to be immediate.",
     illustration: ph("step-1-pause"),
     next: "step2"
   },
   step2: {
     type: "question",
-    prompt: "Step 2 — Assess: is this personal?",
+    prompt: "Step 2 — Assess: is there feedback or criticism that's personal in nature?",
     illustration: ph("step-2-assess"),
     yes: "hr",
     no: "step3"
   },
   hr: {
     type: "info",
-    prompt: "This involves you directly, so it's worth a record and a third party. Loop in HR.",
+    prompt: "You might need to involve HR or a Supervisor.",
     illustration: ph("hr"),
     next: "tips",
     nextLabel: "Final Tips →"
   },
   step3: {
     type: "question",
-    prompt: "Step 3 — Evaluate: do you understand what happened?",
+    prompt: "Step 3 — Evaluate the criticism or feedback by its content. Ask yourself: do I understand what's been said, written or shared?",
     illustration: ph("step-3-evaluate"),
     yes: "fair",
     no: "clarity"
   },
   clarity: {
     type: "info",
-    prompt: "Go to the person directly and calmly ask what they meant.",
+    prompt: "Ask directly for clarification.",
     illustration: ph("ask-for-clarity"),
     next: "step3"
   },
@@ -378,20 +378,20 @@ const flowData = {
   },
   advocate: {
     type: "info",
-    prompt: "Speak up — share your side and push back on what's inaccurate.",
+    prompt: "Advocate for yourself directly. Be prepared: have bullet points and know that you may lose the argument.",
     illustration: ph("advocate"),
     next: "escalate"
   },
   escalate: {
     type: "question",
-    prompt: "Did it get worse after advocating for yourself?",
+    prompt: "But if it gets worse, take notes and know when to involve HR or a Supervisor. Do document any abuse or over the line behavior.",
     illustration: ph("escalate"),
-    yes: "hr",
-    no: "moveon"
+    next: "tips",
+    nextLabel: "Final Tips →"
   },
   moveon: {
     type: "info",
-    prompt: "Take it, move on. You don't have to win every round — note it, let it go, and get back to your day.",
+    prompt: "Take it, move on.",
     illustration: ph("take-it-move-on"),
     next: "tips",
     nextLabel: "Final Tips →"
@@ -400,11 +400,11 @@ const flowData = {
     type: "end",
     title: "Whatever happens next",
     list: [
-      "Don't harm",
-      "Don't post",
-      "Do breathe",
-      "Talk to someone you trust",
-      "Document any abuse"
+      "Don't move spaces unless it's for an IRL conversation. Text threads are never better.",
+      "Don't talk about it publically, including posting or social or sharing screenshots.",
+      "Do breathe, take a walk, sleep on it. Decide if it's still bothering you.",
+      "Do talk to someone you trust, seek guidance, get a gut check. Come up with a plan.",
+      "Do document any abuse or over the line behavior."
     ],
     illustration: ph("tips")
   }

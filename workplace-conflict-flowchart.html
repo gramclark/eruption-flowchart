@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What To Do When It Erupts</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#EEF1ED;
+    --panel:#FFFFFF;
+    --panel-soft:#F5F7F4;
+    --ink:#1E2A28;
+    --ink-soft:#5C6B66;
+    --border:#D7DED9;
+    --line:#AFC0BA;
+    --yes:#2F6F5E;
+    --yes-hover:#25564A;
+    --no:#C98A2B;
+    --no-hover:#A86F1F;
+    --display:'Fraunces', serif;
+    --body:'Inter', sans-serif;
+    --mono:'JetBrains Mono', monospace;
+  }
+
+  *{ box-sizing:border-box; }
+
+  body{
+    margin:0;
+    min-height:100vh;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--body);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:32px 16px 64px;
+  }
+
+  .wrap{ width:100%; max-width:640px; }
+
+  .card{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:28px;
+    box-shadow:0 1px 2px rgba(30,42,40,0.04), 0 12px 28px rgba(30,42,40,0.07);
+    position:relative;
+  }
+
+  .restart{
+    position:absolute;
+    top:22px;
+    right:24px;
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    background:none;
+    border:none;
+    cursor:pointer;
+    padding:4px;
+  }
+  .restart:hover{ color:var(--ink); text-decoration:underline; }
+
+  .node-id{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    margin:0 0 14px;
+  }
+
+  .illustration-frame{
+    aspect-ratio:4/3;
+    width:100%;
+    border:1.5px dashed var(--border);
+    border-radius:12px;
+    background:var(--panel-soft);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+    margin-bottom:22px;
+  }
+  .illustration-frame img,
+  .illustration-frame svg{ max-width:100%; max-height:100%; }
+
+  .illu-placeholder{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:10px;
+    color:var(--ink-soft);
+  }
+  .illu-placeholder svg{ width:48px; height:48px; opacity:.55; }
+  .illu-placeholder span{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+  }
+
+  .prompt-text{
+    font-family:var(--display);
+    font-weight:500;
+    font-size:clamp(1.2rem, 2.6vw, 1.55rem);
+    line-height:1.35;
+    margin:0 0 22px;
+  }
+
+  .end-title{
+    font-family:var(--display);
+    font-weight:600;
+    font-size:clamp(1.4rem, 3vw, 1.8rem);
+    margin:0 0 10px;
+  }
+  .end-desc{
+    font-size:15px;
+    line-height:1.5;
+    color:var(--ink-soft);
+    margin:0 0 22px;
+  }
+  .end-list{
+    margin:0 0 22px;
+    padding:0;
+    list-style:none;
+  }
+  .end-list li{
+    font-size:15px;
+    line-height:1.6;
+    color:var(--ink);
+    padding:7px 0 7px 22px;
+    border-bottom:1px solid var(--border);
+    position:relative;
+  }
+  .end-list li:first-child{ border-top:1px solid var(--border); }
+  .end-list li::before{
+    content:"";
+    position:absolute;
+    left:2px;
+    top:16px;
+    width:7px;
+    height:7px;
+    border-radius:50%;
+    background:var(--yes);
+  }
+
+  .choices{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+
+  .choice-btn{
+    font-family:var(--body);
+    font-weight:600;
+    font-size:15px;
+    padding:14px 16px;
+    border-radius:10px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    transition:background .15s ease, color .15s ease, border-color .15s ease, transform .1s ease;
+  }
+  .choice-btn:active{ transform:scale(0.98); }
+  .choice-btn:focus-visible{ outline:2px solid var(--ink); outline-offset:2px; }
+
+  .choice-yes{ background:var(--yes); border:1.5px solid var(--yes); color:#fff; }
+  .choice-yes:hover{ background:var(--yes-hover); border-color:var(--yes-hover); }
+
+  .choice-no{ background:transparent; border:1.5px solid var(--no); color:var(--no); }
+  .choice-no:hover{ background:var(--no); color:#fff; }
+
+  .next-btn{
+    width:100%;
+    font-family:var(--body);
+    font-weight:600;
+    font-size:15px;
+    padding:14px 16px;
+    border-radius:10px;
+    background:var(--yes);
+    border:1.5px solid var(--yes);
+    color:#fff;
+    cursor:pointer;
+    transition:background .15s ease, transform .1s ease;
+  }
+  .next-btn:hover{ background:var(--yes-hover); }
+  .next-btn:active{ transform:scale(0.98); }
+  .next-btn:focus-visible{ outline:2px solid var(--ink); outline-offset:2px; }
+
+  .restart-btn{
+    width:100%;
+    font-family:var(--body);
+    font-weight:600;
+    font-size:15px;
+    padding:14px 16px;
+    border-radius:10px;
+    background:var(--ink);
+    border:1.5px solid var(--ink);
+    color:#fff;
+    cursor:pointer;
+    transition:opacity .15s ease;
+  }
+  .restart-btn:hover{ opacity:.85; }
+
+  .trail{
+    display:flex;
+    align-items:flex-start;
+    gap:0;
+    margin-top:26px;
+    overflow-x:auto;
+    padding:6px 2px 4px;
+  }
+  .trail-step{ display:flex; align-items:center; flex:0 0 auto; }
+  .trail-step .connector{
+    width:22px; height:0;
+    border-top:1.5px dashed var(--line);
+    margin-top:7px;
+  }
+  .trail-node{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:5px;
+    background:none;
+    border:none;
+    cursor:pointer;
+    padding:0 6px;
+    flex:0 0 auto;
+  }
+  .trail-dot{
+    width:14px; height:14px;
+    border-radius:50%;
+    background:var(--panel);
+    border:1.5px solid var(--line);
+    transition:background .15s ease, border-color .15s ease;
+  }
+  .trail-node.current .trail-dot{ background:var(--ink); border-color:var(--ink); }
+  .trail-node:hover .trail-dot{ border-color:var(--ink); }
+  .trail-label{
+    font-family:var(--mono);
+    font-size:9.5px;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    white-space:nowrap;
+  }
+
+  .footnote{
+    text-align:center;
+    font-size:12px;
+    color:var(--ink-soft);
+    margin-top:18px;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .choice-btn, .next-btn, .restart-btn, .trail-dot{ transition:none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="card">
+    <button class="restart" id="restartTop">Restart ↺</button>
+    <p class="node-id" id="nodeId"></p>
+    <div class="illustration-frame" id="illustration"></div>
+
+    <div id="promptBlock">
+      <h1 class="prompt-text" id="promptText"></h1>
+
+      <div class="choices" id="buttonsYesNo">
+        <button class="choice-btn choice-yes" id="yesBtn">Yes</button>
+        <button class="choice-btn choice-no" id="noBtn">No</button>
+      </div>
+
+      <div id="buttonsNext">
+        <button class="next-btn" id="nextBtn"></button>
+      </div>
+    </div>
+
+    <div id="endBlock" style="display:none;">
+      <h1 class="end-title" id="endTitle"></h1>
+      <p class="end-desc" id="endDesc" style="display:none;"></p>
+      <ul class="end-list" id="endList" style="display:none;"></ul>
+      <button class="restart-btn" id="restartBottom">Start over</button>
+    </div>
+
+    <div class="trail" id="trail"></div>
+  </div>
+
+  <p class="footnote">Each box has a placeholder illustration frame — swap the <code>ph()</code> call for that node in <code>flowData</code> with your own <code>&lt;img&gt;</code> or inline SVG.</p>
+</div>
+
+<script>
+/* ======================================================================
+   FLOWCHART DATA
+
+   Three node types:
+
+   "info"     – a statement with a single Next button.
+                fields: prompt, illustration, next, nextLabel (optional —
+                  defaults to "Next →"; use this for the step right
+                  before your final screen, e.g. "Final Tips →")
+
+   "question" – a yes/no decision.
+                fields: prompt, illustration, yes, no
+
+   "end"      – a final landing point with a Start Over button.
+                fields: title, illustration, and either
+                  description (a paragraph) or
+                  list (an array of strings rendered as bullets)
+
+   The flowchart always starts at the node called "start".
+   ====================================================================== */
+
+function ph(label){
+  return `
+    <div class="illu-placeholder">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+        <circle cx="8.5" cy="8.5" r="1.5"></circle>
+        <path d="M21 15l-5-5L5 21"></path>
+      </svg>
+      <span>${label}</span>
+    </div>`;
+}
+
+const flowData = {
+  start: {
+    type: "info",
+    prompt: "Eruption! Something just set you off — an email, a comment, a moment in a meeting. Before reacting, walk through it.",
+    illustration: ph("eruption"),
+    next: "step1"
+  },
+  step1: {
+    type: "info",
+    prompt: "Step 1 — Pause. Take a breath. Give yourself a beat before you respond.",
+    illustration: ph("step-1-pause"),
+    next: "step2"
+  },
+  step2: {
+    type: "question",
+    prompt: "Step 2 — Assess: is this personal?",
+    illustration: ph("step-2-assess"),
+    yes: "hr",
+    no: "step3"
+  },
+  hr: {
+    type: "info",
+    prompt: "This involves you directly, so it's worth a record and a third party. Loop in HR.",
+    illustration: ph("hr"),
+    next: "tips",
+    nextLabel: "Final Tips →"
+  },
+  step3: {
+    type: "question",
+    prompt: "Step 3 — Evaluate: do you understand what happened?",
+    illustration: ph("step-3-evaluate"),
+    yes: "fair",
+    no: "clarity"
+  },
+  clarity: {
+    type: "info",
+    prompt: "Go to the person directly and calmly ask what they meant.",
+    illustration: ph("ask-for-clarity"),
+    next: "step3"
+  },
+  fair: {
+    type: "question",
+    prompt: "Is it correct, or fair?",
+    illustration: ph("is-it-fair"),
+    yes: "moveon",
+    no: "advocate"
+  },
+  advocate: {
+    type: "info",
+    prompt: "Speak up — share your side and push back on what's inaccurate.",
+    illustration: ph("advocate"),
+    next: "escalate"
+  },
+  escalate: {
+    type: "question",
+    prompt: "Did it get worse after advocating for yourself?",
+    illustration: ph("escalate"),
+    yes: "hr",
+    no: "moveon"
+  },
+  moveon: {
+    type: "info",
+    prompt: "Take it, move on. You don't have to win every round — note it, let it go, and get back to your day.",
+    illustration: ph("take-it-move-on"),
+    next: "tips",
+    nextLabel: "Final Tips →"
+  },
+  tips: {
+    type: "end",
+    title: "Whatever happens next",
+    list: [
+      "Don't harm",
+      "Don't post",
+      "Do breathe",
+      "Talk to someone you trust",
+      "Document any abuse"
+    ],
+    illustration: ph("tips")
+  }
+};
+
+/* ====================== engine — no need to edit below ====================== */
+
+let currentId = "start";
+let history = []; // [{ fromId, choiceLabel }]
+
+const els = {
+  nodeId: document.getElementById("nodeId"),
+  illustration: document.getElementById("illustration"),
+  promptBlock: document.getElementById("promptBlock"),
+  promptText: document.getElementById("promptText"),
+  buttonsYesNo: document.getElementById("buttonsYesNo"),
+  buttonsNext: document.getElementById("buttonsNext"),
+  yesBtn: document.getElementById("yesBtn"),
+  noBtn: document.getElementById("noBtn"),
+  nextBtn: document.getElementById("nextBtn"),
+  endBlock: document.getElementById("endBlock"),
+  endTitle: document.getElementById("endTitle"),
+  endDesc: document.getElementById("endDesc"),
+  endList: document.getElementById("endList"),
+  trail: document.getElementById("trail"),
+};
+
+function render(){
+  const node = flowData[currentId];
+  if(!node){
+    console.error(`No node found with id "${currentId}"`);
+    return;
+  }
+
+  els.nodeId.textContent = currentId;
+  els.illustration.innerHTML = node.illustration || "";
+
+  if(node.type === "end"){
+    els.promptBlock.style.display = "none";
+    els.endBlock.style.display = "block";
+    els.endTitle.textContent = node.title || "Result";
+
+    if(node.list){
+      els.endList.style.display = "block";
+      els.endDesc.style.display = "none";
+      els.endList.innerHTML = node.list.map(item => `<li>${item}</li>`).join("");
+    } else {
+      els.endDesc.style.display = "block";
+      els.endList.style.display = "none";
+      els.endDesc.textContent = node.description || "";
+    }
+  } else {
+    els.endBlock.style.display = "none";
+    els.promptBlock.style.display = "block";
+    els.promptText.textContent = node.prompt || "";
+
+    if(node.type === "question"){
+      els.buttonsYesNo.style.display = "grid";
+      els.buttonsNext.style.display = "none";
+    } else {
+      els.buttonsYesNo.style.display = "none";
+      els.buttonsNext.style.display = "block";
+      els.nextBtn.textContent = node.nextLabel || "Next →";
+    }
+  }
+
+  renderTrail();
+}
+
+function renderTrail(){
+  els.trail.innerHTML = "";
+  const steps = [...history, { fromId: currentId, choiceLabel: null }];
+
+  steps.forEach((step, i) => {
+    if(i > 0){
+      const connector = document.createElement("div");
+      connector.className = "connector";
+      els.trail.appendChild(connector);
+    }
+
+    const wrapper = document.createElement("div");
+    wrapper.className = "trail-step";
+
+    const btn = document.createElement("button");
+    btn.className = "trail-node" + (i === steps.length - 1 ? " current" : "");
+    btn.innerHTML = `<span class="trail-dot"></span><span class="trail-label">${step.fromId}</span>`;
+    btn.addEventListener("click", () => jumpTo(i));
+
+    wrapper.appendChild(btn);
+    els.trail.appendChild(wrapper);
+  });
+}
+
+function jumpTo(index){
+  currentId = history[index] ? history[index].fromId : currentId;
+  history = history.slice(0, index);
+  render();
+}
+
+function advance(direction){
+  const node = flowData[currentId];
+  if(!node || node.type === "end") return;
+
+  let targetId, label;
+  if(node.type === "question"){
+    targetId = direction === "yes" ? node.yes : node.no;
+    label = direction.toUpperCase();
+  } else {
+    targetId = node.next;
+    label = "NEXT";
+  }
+
+  if(!targetId || !flowData[targetId]){
+    console.error(`"${direction}" from "${currentId}" points to a missing node ("${targetId}")`);
+    return;
+  }
+
+  history.push({ fromId: currentId, choiceLabel: label });
+  currentId = targetId;
+  render();
+}
+
+function restart(){
+  currentId = "start";
+  history = [];
+  render();
+}
+
+els.yesBtn.addEventListener("click", () => advance("yes"));
+els.noBtn.addEventListener("click", () => advance("no"));
+els.nextBtn.addEventListener("click", () => advance("next"));
+document.getElementById("restartTop").addEventListener("click", restart);
+document.getElementById("restartBottom").addEventListener("click", restart);
+
+document.addEventListener("keydown", (e) => {
+  const node = flowData[currentId];
+  if(!node || node.type === "end") return;
+  if(node.type === "question"){
+    if(e.key.toLowerCase() === "y") advance("yes");
+    if(e.key.toLowerCase() === "n") advance("no");
+  } else if(e.key === "Enter"){
+    advance("next");
+  }
+});
+
+render();
+</script>
+
+</body>
+</html>
